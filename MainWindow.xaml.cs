@@ -76,83 +76,239 @@ namespace KitchenReportForm
         }
 
 
+        /* private void ImportFromExcel_Click(object sender, RoutedEventArgs e)
+         {
+             var openFileDialog = new OpenFileDialog
+             {
+                 Title = "Выберите файл Excel",
+                 Filter = "Excel файл (*.xlsx)|*.xlsx"
+             };
+
+             if (openFileDialog.ShowDialog() == true)
+             {
+                 var workbook = new XLWorkbook(openFileDialog.FileName);
+                 var worksheet = workbook.Worksheet(1);
+
+                 // Шаг 1: загрузка данных из A90+ в TextBox'ы
+                 var textBoxes = new List<TextBox>();
+
+                 void CollectTextBoxes(DependencyObject parent)
+                 {
+                     int count = VisualTreeHelper.GetChildrenCount(parent);
+                     for (int i = 0; i < count; i++)
+                     {
+                         var child = VisualTreeHelper.GetChild(parent, i);
+                         if (child is TextBox tb)
+                             textBoxes.Add(tb);
+                         else
+                             CollectTextBoxes(child);
+                     }
+                 }
+
+                 CollectTextBoxes(this);
+
+                 int row = 90;
+                 foreach (var tb in textBoxes)
+                 {
+                     var cellValue = worksheet.Cell($"A{row}").GetString();
+                     tb.Text = cellValue;
+                     row++;
+                 }
+
+                 // Шаг 2: загрузка строк таблицы из A110+
+                 int tableRow = 110;
+                 var items = new List<KitchenItem>();
+
+                 while (!worksheet.Cell($"A{tableRow}").IsEmpty())
+                 {
+                     try
+                     {
+                         var item = new KitchenItem
+                         {
+                             Number = int.TryParse(worksheet.Cell(tableRow, 1).GetString(), out var num) ? num : 0,
+                             Name = worksheet.Cell(tableRow, 2).GetString(),
+                             Code = worksheet.Cell(tableRow, 3).GetString(),
+                             Price = double.TryParse(worksheet.Cell(tableRow, 4).GetString(), out var p) ? p : 0,
+                             QuantityNal = double.TryParse(worksheet.Cell(tableRow, 5).GetString(), out var qn) ? qn : 0,
+                             SumNal = double.TryParse(worksheet.Cell(tableRow, 6).GetString(), out var sn) ? sn : 0,
+                             QuantityBufet = double.TryParse(worksheet.Cell(tableRow, 7).GetString(), out var qb) ? qb : 0,
+                             SumBufet = double.TryParse(worksheet.Cell(tableRow, 8).GetString(), out var sb) ? sb : 0,
+                             QuantityOrg = double.TryParse(worksheet.Cell(tableRow, 9).GetString(), out var qo) ? qo : 0,
+                             SumOrg = double.TryParse(worksheet.Cell(tableRow, 10).GetString(), out var so) ? so : 0,
+                             QuantityTotal = double.TryParse(worksheet.Cell(tableRow, 11).GetString(), out var qt) ? qt : 0,
+                             SumTotal = double.TryParse(worksheet.Cell(tableRow, 12).GetString(), out var st) ? st : 0,
+                             AccountingPrice = double.TryParse(worksheet.Cell(tableRow, 13).GetString(), out var ap) ? ap : 0,
+                             AccountingSum = double.TryParse(worksheet.Cell(tableRow, 14).GetString(), out var asum) ? asum : 0
+                         };
+
+                         items.Add(item);
+                         tableRow++;
+                     }
+                     catch
+                     {
+                         break; // прерываем при ошибке или пустой строке
+                     }
+                 }
+
+                 KitchenDataGrid.ItemsSource = items;
+             }
+         }*/
+
+        private int TryGetInt(IXLCell cell)
+        {
+            if (cell == null || cell.IsEmpty()) return 0;
+
+            if (cell.DataType == XLDataType.Number)
+                return (int)cell.GetDouble();
+
+            if (int.TryParse(cell.GetString(), out int result))
+                return result;
+
+            return 0;
+        }
+
+        private double TryGetDouble(IXLCell cell)
+        {
+            if (cell == null || cell.IsEmpty()) return 0.0;
+
+            if (cell.DataType == XLDataType.Number)
+                return cell.GetDouble();
+
+            if (double.TryParse(cell.GetString().Replace("₽", "").Trim(), out double result))
+                return result;
+
+            return 0.0;
+        }
+
         private void ImportFromExcel_Click(object sender, RoutedEventArgs e)
         {
-            var openFileDialog = new OpenFileDialog
+            var openFileDialog = new Microsoft.Win32.OpenFileDialog
             {
-                Title = "Выберите файл Excel",
+                Title = "Открыть файл Excel",
                 Filter = "Excel файл (*.xlsx)|*.xlsx"
             };
 
-            if (openFileDialog.ShowDialog() == true)
+            if (openFileDialog.ShowDialog() != true)
+                return;
+
+            try
             {
-                var workbook = new XLWorkbook(openFileDialog.FileName);
-                var worksheet = workbook.Worksheet(1);
-
-                // Шаг 1: загрузка данных из A90+ в TextBox'ы
-                var textBoxes = new List<TextBox>();
-
-                void CollectTextBoxes(DependencyObject parent)
+                using (var workbook = new XLWorkbook(openFileDialog.FileName))
                 {
-                    int count = VisualTreeHelper.GetChildrenCount(parent);
-                    for (int i = 0; i < count; i++)
+                    var worksheet = workbook.Worksheet(1);
+
+                    // Основные текстовые поля
+                    OrganizationTextBox.Text = worksheet.Cell("A6").GetString();
+                    DepartmentTextBox.Text = worksheet.Cell("A8").GetString();
+                    DocumentNumberTextBox.Text = worksheet.Cell("AQ14").GetString();
+
+                    // Дата утверждения (день, месяц, год — три ячейки)
+                    string dayStr = worksheet.Cell("BK17").GetString();
+                    string monthStr = worksheet.Cell("BM17").GetString();
+                    string yearStr = worksheet.Cell("BU17").GetString();
+
+                    if (int.TryParse(dayStr, out int day) &&
+                        int.TryParse(yearStr, out int year))
                     {
-                        var child = VisualTreeHelper.GetChild(parent, i);
-                        if (child is TextBox tb)
-                            textBoxes.Add(tb);
-                        else
-                            CollectTextBoxes(child);
+                        try
+                        {
+                            var monthNumber = DateTime.ParseExact(monthStr, "MMMM", new CultureInfo("ru-RU")).Month;
+                            ApprovalDatePicker.SelectedDate = new DateTime(year, monthNumber, day);
+                        }
+                        catch
+                        {
+                            ApprovalDatePicker.SelectedDate = null;
+                        }
                     }
-                }
-
-                CollectTextBoxes(this);
-
-                int row = 90;
-                foreach (var tb in textBoxes)
-                {
-                    var cellValue = worksheet.Cell($"A{row}").GetString();
-                    tb.Text = cellValue;
-                    row++;
-                }
-
-                // Шаг 2: загрузка строк таблицы из A110+
-                int tableRow = 110;
-                var items = new List<KitchenItem>();
-
-                while (!worksheet.Cell($"A{tableRow}").IsEmpty())
-                {
-                    try
+                    else
                     {
+                        ApprovalDatePicker.SelectedDate = null;
+                    }
+
+                    // Дата составления акта (одна ячейка)
+                    if (DateTime.TryParseExact(worksheet.Cell("AY14").GetString(), "dd.MM.yyyy", new CultureInfo("ru-RU"), DateTimeStyles.None, out var dateAct))
+                        ApprovalDatePicker2.SelectedDate = dateAct;
+                    else
+                        ApprovalDatePicker2.SelectedDate = null;
+
+                    OkpoTextBox.Text = worksheet.Cell("BQ6").GetString();
+                    OkdpTextBox.Text = worksheet.Cell("BQ9").GetString();
+                    OperationTextBox.Text = worksheet.Cell("BQ10").GetString();
+                    PositionTextBox.Text = worksheet.Cell("BJ13").GetString();
+
+                    ReceivedRubTextBox.Text = worksheet.Cell("A58").GetString();
+                    ReceivedKopTextBox.Text = worksheet.Cell("BP58").GetString();
+                    TotalRubTextBox.Text = worksheet.Cell("AE59").GetString();
+                    TotalKopTextBox.Text = worksheet.Cell("BP59").GetString();
+
+                    SpicesPercentTextBox.Text = worksheet.Cell("V62").GetString();
+                    SpicesRubTextBox.Text = worksheet.Cell("AK62").GetString();
+                    SpicesKopTextBox.Text = worksheet.Cell("BC62").GetString();
+
+                    SaltPercentTextBox.Text = worksheet.Cell("U64").GetString();
+                    SaltRubTextBox.Text = worksheet.Cell("AK64").GetString();
+                    SaltKopTextBox.Text = worksheet.Cell("BC64").GetString();
+
+                    JobTitleComisionTextBox.Text = worksheet.Cell("A73").GetString();
+
+                    CashRubTextBox.Text = worksheet.Cell("I76").GetString();
+                    CashKopTextBox.Text = worksheet.Cell("BR76").GetString();
+
+                    InvoiceNumberTextBox.Text = worksheet.Cell("I80").GetString();
+                    DailySumTextBoxRub.Text = worksheet.Cell("BH80").GetString();
+                    DailySumTextBoxCop.Text = worksheet.Cell("BR80").GetString();
+                    SheetNumberTextBox.Text = worksheet.Cell("L82").GetString();
+
+                    // Таблица
+                    var items = new List<KitchenItem>();
+
+                    for (int i = 0; i < 18; i++)
+                    {
+                        int row = (i < 11) ? 27 + i : 47 + (i - 11);
+
                         var item = new KitchenItem
                         {
-                            Number = int.TryParse(worksheet.Cell(tableRow, 1).GetString(), out var num) ? num : 0,
-                            Name = worksheet.Cell(tableRow, 2).GetString(),
-                            Code = worksheet.Cell(tableRow, 3).GetString(),
-                            Price = double.TryParse(worksheet.Cell(tableRow, 4).GetString(), out var p) ? p : 0,
-                            QuantityNal = double.TryParse(worksheet.Cell(tableRow, 5).GetString(), out var qn) ? qn : 0,
-                            SumNal = double.TryParse(worksheet.Cell(tableRow, 6).GetString(), out var sn) ? sn : 0,
-                            QuantityBufet = double.TryParse(worksheet.Cell(tableRow, 7).GetString(), out var qb) ? qb : 0,
-                            SumBufet = double.TryParse(worksheet.Cell(tableRow, 8).GetString(), out var sb) ? sb : 0,
-                            QuantityOrg = double.TryParse(worksheet.Cell(tableRow, 9).GetString(), out var qo) ? qo : 0,
-                            SumOrg = double.TryParse(worksheet.Cell(tableRow, 10).GetString(), out var so) ? so : 0,
-                            QuantityTotal = double.TryParse(worksheet.Cell(tableRow, 11).GetString(), out var qt) ? qt : 0,
-                            SumTotal = double.TryParse(worksheet.Cell(tableRow, 12).GetString(), out var st) ? st : 0,
-                            AccountingPrice = double.TryParse(worksheet.Cell(tableRow, 13).GetString(), out var ap) ? ap : 0,
-                            AccountingSum = double.TryParse(worksheet.Cell(tableRow, 14).GetString(), out var asum) ? asum : 0
+                            Number = TryGetInt(worksheet.Cell($"A{row}")),
+                            Name = worksheet.Cell($"E{row}").GetString(),
+                            Code = worksheet.Cell($"P{row}").GetString(),
+
+                            Price = TryGetDouble(worksheet.Cell($"S{row}")),
+                            QuantityNal = TryGetDouble(worksheet.Cell($"X{row}")),
+                            SumNal = TryGetDouble(worksheet.Cell($"AB{row}")),
+
+                            QuantityBufet = TryGetDouble(worksheet.Cell($"AG{row}")),
+                            SumBufet = TryGetDouble(worksheet.Cell($"AK{row}")),
+
+                            QuantityOrg = TryGetDouble(worksheet.Cell($"AP{row}")),
+                            SumOrg = TryGetDouble(worksheet.Cell($"AT{row}")),
+
+                            QuantityTotal = TryGetDouble(worksheet.Cell($"AY{row}")),
+                            SumTotal = TryGetDouble(worksheet.Cell($"BC{row}")),
+
+                            AccountingPrice = TryGetDouble(worksheet.Cell($"BG{row}")),
+                            AccountingSum = TryGetDouble(worksheet.Cell($"BK{row}")),
+
+                            PricePrice = TryGetDouble(worksheet.Cell($"BO{row}")),
+                            PriceSum = TryGetDouble(worksheet.Cell($"BT{row}")),
                         };
 
-                        items.Add(item);
-                        tableRow++;
+                        // Не добавляем полностью пустые строки
+                        if (!string.IsNullOrWhiteSpace(item.Name) || item.Price > 0)
+                            items.Add(item);
                     }
-                    catch
-                    {
-                        break; // прерываем при ошибке или пустой строке
-                    }
-                }
 
-                KitchenDataGrid.ItemsSource = items;
+                    // Привязываем обратно
+                    KitchenDataGrid.ItemsSource = items;
+                    MessageBox.Show("Данные успешно загружены из Excel.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при загрузке данных:\n{ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+
 
         private void ExportTextBoxesToExcel()
         {

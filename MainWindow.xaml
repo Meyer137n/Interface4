@@ -308,8 +308,8 @@
                 <TextBlock Text="коп." Margin="5,5"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="(прописью)" Margin="105,0,0,0"/>
-                <TextBlock Text="(прописью)" Margin="65,0,0,0"/>
+                <TextBlock Text="(прописью)" Margin="270,0,0,0"/>
+                <TextBlock Text="(прописью)" Margin="330,0,0,0"/>
             </StackPanel>
 
             <!-- Стоимость реализованных изделий, указанная в настоящем акте... -->
