@@ -1,0 +1,285 @@
+<Window x:Class="KitchenReportForm.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:sys="clr-namespace:System;assembly=mscorlib"
+        Title="Форма ОП-10" Height="1400" Width="1400">
+    
+    <Window.Resources>
+        <x:Array x:Key="KitchenItemsList" Type="sys:String" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+            <sys:String>Котлета по-киевски</sys:String>
+            <sys:String>Суп борщ</sys:String>
+            <sys:String>Пюре картофельное</sys:String>
+            <sys:String>Омлет с сыром</sys:String>
+        </x:Array>
+
+        <x:Array x:Key="KitchenCodesList" Type="sys:String" xmlns:sys="clr-namespace:System;assembly=mscorlib">
+            <sys:String>101</sys:String>
+            <sys:String>102</sys:String>
+            <sys:String>103</sys:String>
+            <sys:String>104</sys:String>
+        </x:Array>
+    </Window.Resources>
+
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="10">
+
+            <Button Content="Выгрузка xlsx"
+                    Width="200"
+                    Height="30"
+                    Margin="-300,20,0,0"
+                    Click="ExportToExcel_Click"/>
+
+            <Button Content="Загрузить из xlsx"
+                    Width="200"
+                    Height="30"
+                    Margin="150,-30,0,0"
+                    Click="ImportFromExcel_Click"/> 
+
+
+            <!-- Заголовок -->
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <StackPanel>
+                    <TextBlock Text="Унифицированная форма № ОП-10" FontWeight="Bold" FontSize="12"/>
+                    <TextBlock Text="Утверждена постановлением Госкомстата" FontSize="12"/>
+                    <TextBlock Text="России от 25.12.98 № 132" FontSize="12"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Дополнительные подписи и коды -->
+            <StackPanel Margin="10">
+                <TextBlock Text="Форма по ОКУД: 0330510" HorizontalAlignment="Right" Margin="0,0,40,0"/>
+                <StackPanel Orientation="Horizontal" Margin="0,0,40,0" HorizontalAlignment="Right">
+                    <TextBlock Text="по ОКПО: "/>
+                    <TextBox Name="OkpoTextBox" Width="150" Height="20"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,40,0" HorizontalAlignment="Right">
+                    <TextBlock Text="Вид деятельности по ОКДП: "/>
+                    <TextBox Name="OkdpTextBox" Width="150" Height="20"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="0,0,40,10" HorizontalAlignment="Right">
+                    <TextBlock Text="Вид операции: "/>
+                    <TextBox Name="OperationTextBox" Width="150" Height="20"/>
+                </StackPanel>
+
+                <TextBlock Text="УТВЕРЖДАЮ" FontWeight="Bold" HorizontalAlignment="Right" Margin="0,0,40,0"/>
+                <TextBlock Text="Руководитель" HorizontalAlignment="Right" Margin="0,0,40,0"/>
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,40,10" HorizontalAlignment="Right">
+                    <TextBlock Text="Должность: "/>
+                    <TextBox Name="PositionTextBox" Width="150" Height="20"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,40,0">
+                    <TextBox Name="SignatureTextBox" Width="100" Margin="5,0"/>
+                    <TextBox Name="SignatureNameTextBox" Width="150" Margin="5,0"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,40,0">
+                    <TextBlock Text="(подпись)          "/>
+                    <TextBlock Text="(расшифровка подписи)    "/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,40,0">
+                    <TextBlock Text="Дата: "/>
+                    <TextBox Name="DateDayTextBox" Width="30" MaxLength="2" Margin="5,0"/>
+                    <TextBlock Text="дн." Margin="5,0"/>
+                    <TextBox Name="DateMonthTextBox" Width="60" MaxLength="15" Margin="5,0"/>
+                    <TextBlock Text="мес." Margin="5,0"/>
+                    <TextBox Name="DateYearTextBox" Width="60" MaxLength="4" Margin="5,0"/>
+                    <TextBlock Text="г." Margin="5,0"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Организация -->
+            <StackPanel Margin="0,10,0,0">
+                <TextBox Name="OrganizationTextBox" Width="600" Height="25" HorizontalAlignment="Left" FontSize="14"/>
+                <TextBlock Text="(организация)" FontStyle="Italic" FontSize="12"/>
+            </StackPanel>
+
+            <!-- Структурное подразделение -->
+            <StackPanel Margin="0,5,0,0">
+                <TextBox Name="DepartmentTextBox" Width="600" Height="25" HorizontalAlignment="Left" FontSize="14"/>
+                <TextBlock Text="(структурное подразделение)" FontStyle="Italic" FontSize="12"/>
+            </StackPanel>
+
+            <!-- Название документа -->
+            <StackPanel Margin="0,10,0,0" HorizontalAlignment="Center">
+                <TextBlock Text="АКТ" FontSize="16" FontWeight="Bold" TextAlignment="Center"/>
+                <TextBlock Text="О РЕАЛИЗАЦИИ И ОТПУСКЕ ИЗДЕЛИЙ КУХНИ" FontSize="16" FontWeight="Bold" TextAlignment="Center"/>
+            </StackPanel>
+
+            <!-- Номер документа и дата -->
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <StackPanel Margin="0,0,20,0">
+                    <TextBlock Text="Номер документа" FontSize="12"/>
+                    <TextBox Name="DocumentNumberTextBox" Width="150" Height="25"/>
+                </StackPanel>
+                <StackPanel>
+                    <TextBlock Text="Дата составления" FontSize="12"/>
+                    <TextBox Name="DocumentDateTextBox" Width="150" Height="25"/>
+                </StackPanel>
+            </StackPanel>
+
+            <!-- Таблица -->
+            <DataGrid x:Name="KitchenDataGrid"
+          AutoGenerateColumns="False"
+          HeadersVisibility="Column"
+          CanUserAddRows="False"
+          CanUserDeleteRows="True"
+          IsReadOnly="False"
+          Margin="0,20,0,0"
+          Height="300"
+          ItemsSource="{Binding KitchenItems}">
+
+        <DataGrid.Columns>
+        <DataGridTextColumn Header="№" Width="40" Binding="{Binding Number}" IsReadOnly="True"/>
+
+        <!-- Готовое изделие (встроенный список) -->
+            <DataGridTemplateColumn Header="Готовое изделие" Width="200">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}" />
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+                <DataGridTemplateColumn.CellEditingTemplate>
+                    <DataTemplate>
+                                <ComboBox
+        ItemsSource="{StaticResource KitchenItemsList}" 
+        SelectedItem="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+        IsEditable="True"
+        IsTextSearchEnabled="True"
+        StaysOpenOnEdit="True"
+        TextSearch.TextPath=""/>
+                            </DataTemplate>
+                </DataGridTemplateColumn.CellEditingTemplate>
+            </DataGridTemplateColumn>
+
+        <!-- Код (встроенный список) -->
+            <DataGridTemplateColumn Header="Код" Width="80">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Code}" />
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+                <DataGridTemplateColumn.CellEditingTemplate>
+                    <DataTemplate>
+                        <ComboBox
+        ItemsSource="{StaticResource KitchenCodesList}" 
+        SelectedItem="{Binding Code, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+        IsEditable="True"
+        IsTextSearchEnabled="True"
+        StaysOpenOnEdit="True"/>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellEditingTemplate>
+            </DataGridTemplateColumn>
+
+
+                    <!-- Остальные числовые поля -->
+                    <DataGridTextColumn Header="Цена" Width="80" Binding="{Binding Price}"/>
+                    <DataGridTextColumn Header="Кол-во (нал.)" Width="80" Binding="{Binding QuantityNal}"/>
+                    <DataGridTextColumn Header="Сумма (нал.)" Width="80" Binding="{Binding SumNal}"/>
+                    <DataGridTextColumn Header="Кол-во (буфет)" Width="80" Binding="{Binding QuantityBufet}"/>
+                    <DataGridTextColumn Header="Сумма (буфет)" Width="80" Binding="{Binding SumBufet}"/>
+                    <DataGridTextColumn Header="Кол-во (орг.)" Width="80" Binding="{Binding QuantityOrg}"/>
+                    <DataGridTextColumn Header="Сумма (орг.)" Width="80" Binding="{Binding SumOrg}"/>
+                    <DataGridTextColumn Header="Кол-во (всего)" Width="80" Binding="{Binding QuantityTotal}"/>
+                    <DataGridTextColumn Header="Сумма (всего)" Width="80" Binding="{Binding SumTotal}"/>
+                    <DataGridTextColumn Header="Цена (учёт)" Width="80" Binding="{Binding AccountingPrice}"/>
+                    <DataGridTextColumn Header="Сумма (учёт)" Width="80" Binding="{Binding AccountingSum}"/>
+                </DataGrid.Columns>
+            </DataGrid>
+
+            <Button Content="Добавить строку +" Width="150" Height="30" Margin="0,10,0,0"
+            Click="AddRowButton_Click" HorizontalAlignment="Center"/>
+
+            <!-- Итого -->
+            <TextBlock Text="Итого" FontWeight="Bold" Margin="0,10,0,0"/>
+
+            <!-- Получено от посетителей -->
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <TextBlock Text="Получено за приготовление блюд из продуктов посетителей:" Width="400"/>
+                <TextBox Name="ReceivedRubTextBox" Width="100"/>
+                <TextBlock Text="руб.   " Margin="10,0,0,0"/>
+                <TextBox Name="ReceivedKopTextBox" Width="50"/>
+                <TextBlock Text="коп." Margin="10,0,0,0"/>
+            </StackPanel>
+
+            <!-- Итого за день -->
+            <TextBlock Text="Итого реализовано, отпущено и оказано услуг за отчётный день" FontWeight="Bold" Margin="0,10,0,0"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBox Name="TotalRubTextBox" Width="100"/>
+                <TextBlock Text="руб.   " Margin="10,0,0,0"/>
+                <TextBox Name="TotalKopTextBox" Width="50"/>
+                <TextBlock Text="коп." Margin="10,0,0,0"/>
+            </StackPanel>
+
+            <!-- Справка по расходу -->
+            <TextBlock Text="СПРАВКА: Израсходовано на приготовление блюд" FontWeight="Bold" Margin="0,10,0,0"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="специи % к обороту на сумму" Width="180"/>
+                <TextBox Name="SpicesRubTextBox" Width="100"/>
+                <TextBlock Text="руб.   " Margin="10,0,0,0"/>
+                <TextBox Name="SpicesKopTextBox" Width="50"/>
+                <TextBlock Text="коп." Margin="10,0,0,0"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="соль % к обороту на сумму" Width="180"/>
+                <TextBox Name="SaltRubTextBox" Width="100"/>
+                <TextBlock Text="руб.   " Margin="10,0,0,0"/>
+                <TextBox Name="SaltKopTextBox" Width="50"/>
+                <TextBlock Text="коп." Margin="10,0,0,0"/>
+            </StackPanel>
+
+            <!-- Подписи комиссии -->
+            <TextBlock Text="Члены комиссии:" FontWeight="Bold" Margin="0,10,0,0"/>
+            <TextBlock Text="Заведующий производством"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBox Name="ZavodPodpisTextBox" Width="200"/>
+                <TextBlock Text="(подпись)" Margin="10,0,0,0"/>
+                <TextBox Name="ZavodNameTextBox" Width="200" Margin="10,0,0,0"/>
+                <TextBlock Text="(расшифровка подписи)" Margin="10,0,0,0"/>
+            </StackPanel>
+
+            <TextBlock Text="Марочница" Margin="0,10,0,0"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBox Name="MarochnitsaPodpisTextBox" Width="200"/>
+                <TextBlock Text="(подпись)" Margin="10,0,0,0"/>
+                <TextBox Name="MarochnitsaNameTextBox" Width="200" Margin="10,0,0,0"/>
+                <TextBlock Text="(расшифровка подписи)" Margin="10,0,0,0"/>
+            </StackPanel>
+
+            <!-- Выручка кассы -->
+            <TextBlock Text="Выручка кассы" FontWeight="Bold" Margin="0,10,0,0"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBox Name="CashRubTextBox" Width="100"/>
+                <TextBlock Text="руб.   " Margin="10,0,0,0"/>
+                <TextBox Name="CashKopTextBox" Width="50"/>
+                <TextBlock Text="коп." Margin="10,0,0,0"/>
+                <TextBlock Text="Кассир" Margin="20,0,0,0"/>
+                <TextBox Name="CashierPodpisTextBox" Width="150"/>
+                <TextBlock Text="(подпись)" Margin="10,0,0,0"/>
+                <TextBox Name="CashierNameTextBox" Width="150" Margin="10,0,0,0"/>
+                <TextBlock Text="(расшифровка подписи)" Margin="10,0,0,0"/>
+            </StackPanel>
+
+            <!-- Приложения -->
+            <TextBlock Text="ПРИЛОЖЕНИЕ:" FontWeight="Bold" Margin="0,10,0,0"/>
+            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                <TextBlock Text="Накладные №" VerticalAlignment="Center"/>
+                <TextBox Name="InvoiceNumberTextBox" Width="100" Margin="5,0"/>
+                <TextBlock Text=", Заборные листы №" VerticalAlignment="Center" Margin="5,0"/>
+                <TextBox Name="SheetNumberTextBox" Width="100" Margin="5,0"/>
+                <TextBlock Text=", Сумма реализованного наложения за день" VerticalAlignment="Center" Margin="5,0"/>
+                <TextBox Name="DailySumTextBox" Width="80" Margin="5,0"/>
+                <TextBlock Text="руб." VerticalAlignment="Center" Margin="5,0"/>
+            </StackPanel>
+
+            <!-- Акт проверки бухгалтер -->
+            <TextBlock Text="Акт проверки бухгалтер" FontWeight="Bold" Margin="0,10,0,0"/>
+            <StackPanel Orientation="Horizontal">
+                <TextBox Name="AuditPodpisTextBox" Width="200"/>
+                <TextBlock Text="(подпись)" Margin="10,0,0,0"/>
+                <TextBox Name="AuditNameTextBox" Width="200" Margin="10,0,0,0"/>
+                <TextBlock Text="(расшифровка подписи)" Margin="10,0,0,0"/>
+            </StackPanel>
+        </StackPanel>
+    </ScrollViewer>
+</Window>
