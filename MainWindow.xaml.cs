@@ -330,49 +330,75 @@ namespace KitchenReportForm
             ExportTextBoxesToExcel();
         }
 
-        private void DecimalTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        private void IntegerOnly_PreviewTextInput(object sender, TextCompositionEventArgs e)
         {
-            // Проверка на ввод допустимого десятичного числа (с точкой)
-            var textBox = sender as TextBox;
-            string fullText = textBox.Text.Insert(textBox.SelectionStart, e.Text);
-
-            e.Handled = !IsValidDecimalInput(fullText);
-        }
-
-        private bool IsValidDecimalInput(string input)
-        {
-            // Разрешаем до 2 знаков после запятой, точка — разделитель
-            return Regex.IsMatch(input, @"^\d*\.?\d{0,2}$");
-        }
-
-        private void OnlyNumbers_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            // Разрешаем только цифры и запятую (для десятичных)
-            e.Handled = !Regex.IsMatch(e.Text, @"^[0-9,]+$");
-        }
-
-        private void Percentage_PreviewTextInput(object sender, TextCompositionEventArgs e)
-        {
-            // Ввод только цифр
+            // Разрешаем только цифры 0–9
             e.Handled = !Regex.IsMatch(e.Text, "^[0-9]+$");
         }
 
-        private void Percentage_LostFocus(object sender, RoutedEventArgs e)
+        private void IntegerRange0To100_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            // Предполагаемый полный текст после ввода
+            if (sender is TextBox tb)
+            {
+                string fullText = tb.Text.Insert(tb.SelectionStart, e.Text);
+                if (int.TryParse(fullText, out int value))
+                {
+                    e.Handled = value < 0;
+                }
+                else
+                {
+                    e.Handled = true; // не число — отклоняем
+                }
+            }
+        }
+        private void IntegerRange0To100_LostFocus(object sender, RoutedEventArgs e)
         {
             if (sender is TextBox tb)
             {
                 if (int.TryParse(tb.Text, out int value))
                 {
-                    if (value < 0 || value > 100)
-                        tb.Text = "100"; // Автоматически ограничиваем
+                    if (value < 0) tb.Text = "0";
+                    //else if (value > 100) tb.Text = "100";
                 }
                 else
                 {
-                    tb.Text = "0"; // Если не число — сбрасываем
+                    tb.Text = "0"; // не число — сбрасываем
                 }
             }
         }
 
+        private void IntegerCop_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            // Предполагаемый полный текст после ввода
+            if (sender is TextBox tb)
+            {
+                string fullText = tb.Text.Insert(tb.SelectionStart, e.Text);
+                if (int.TryParse(fullText, out int value))
+                {
+                    e.Handled = value < 0 || value > 99;
+                }
+                else
+                {
+                    e.Handled = true; // не число — отклоняем
+                }
+            }
+        }
+        private void IntegerCop_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (sender is TextBox tb)
+            {
+                if (int.TryParse(tb.Text, out int value))
+                {
+                    if (value < 0) tb.Text = "0";
+                    else if (value > 99) tb.Text = "99";
+                }
+                else
+                {
+                    tb.Text = "0"; // не число — сбрасываем
+                }
+            }
+        }
 
     }
 
