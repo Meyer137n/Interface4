@@ -345,6 +345,34 @@ namespace KitchenReportForm
             return Regex.IsMatch(input, @"^\d*\.?\d{0,2}$");
         }
 
+        private void OnlyNumbers_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            // Разрешаем только цифры и запятую (для десятичных)
+            e.Handled = !Regex.IsMatch(e.Text, @"^[0-9,]+$");
+        }
+
+        private void Percentage_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            // Ввод только цифр
+            e.Handled = !Regex.IsMatch(e.Text, "^[0-9]+$");
+        }
+
+        private void Percentage_LostFocus(object sender, RoutedEventArgs e)
+        {
+            if (sender is TextBox tb)
+            {
+                if (int.TryParse(tb.Text, out int value))
+                {
+                    if (value < 0 || value > 100)
+                        tb.Text = "100"; // Автоматически ограничиваем
+                }
+                else
+                {
+                    tb.Text = "0"; // Если не число — сбрасываем
+                }
+            }
+        }
+
 
     }
 
