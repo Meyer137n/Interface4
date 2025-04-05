@@ -50,8 +50,28 @@ namespace KitchenReportForm
 
         private void AddRowButton_Click(object sender, RoutedEventArgs e)
         {
+            if (KitchenItems.Count >= 18)
+            {
+                MessageBox.Show("Нельзя добавить больше 18 строк.");
+                return;
+            }
+
             KitchenItems.Add(new KitchenItem { Number = KitchenItems.Count + 1 });
         }
+
+        private void DeleteRowButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedItem = KitchenDataGrid.SelectedItem as KitchenItem;
+            if (selectedItem != null)
+            {
+                KitchenItems.Remove(selectedItem);
+            }
+            else
+            {
+                MessageBox.Show("Выберите строку для удаления.");
+            }
+        }
+
 
         private void ImportFromExcel_Click(object sender, RoutedEventArgs e)
         {
@@ -206,7 +226,7 @@ namespace KitchenReportForm
                             worksheet.Cell($"BG{targetRow}").Value = item.AccountingPrice;
                             worksheet.Cell($"BK{targetRow}").Value = item.AccountingSum;
                             worksheet.Cell($"BO{targetRow}").Value = item.PricePrice;
-                            worksheet.Cell($"BT{targetRow}").Value = item.PriceSumm;
+                            worksheet.Cell($"BT{targetRow}").Value = item.PriceSum;
                         }
                     }
 
@@ -242,7 +262,7 @@ namespace KitchenReportForm
         public double AccountingPrice { get; set; }
         public double AccountingSum { get; set; }
         public double PricePrice { get; set; }
-        public double PriceSumm { get; set; }
+        public double PriceSum { get; set; }
 
         public int Number { get; set; }
 
