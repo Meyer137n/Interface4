@@ -8,18 +8,19 @@
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="10">
 
-            <Button Content="Выгрузка xlsx"
-                    Width="200"
-                    Height="30"
-                    Margin="-300,20,0,0"
-                    Click="ExportToExcel_Click"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Content="Выгрузка xlsx"
+                        Width="200"
+                        Height="30"
+                        Margin="0,0,10,0"
+                        Click="ExportToExcel_Click"/>
 
-            <Button Content="Загрузить из xlsx"
-                    Width="200"
-                    Height="30"
-                    Margin="150,-30,0,0"
-                    Click="ImportFromExcel_Click"/> 
-
+                <Button Content="Загрузить из xlsx"
+                        Width="200"
+                        Height="30"
+                        Margin="10,0,0,0"
+                        Click="ImportFromExcel_Click"/>
+            </StackPanel>
 
             <!-- Заголовок -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
