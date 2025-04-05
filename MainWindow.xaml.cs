@@ -98,7 +98,13 @@ namespace KitchenReportForm
             if (cell.DataType == XLDataType.Number)
                 return cell.GetDouble();
 
-            if (double.TryParse(cell.GetString().Replace("₽", "").Trim(), out double result))
+            var raw = cell.GetString()
+                          .Replace("₽", "")
+                          .Replace(" ", "")
+                          .Replace(",", ".") // важно: Excel может использовать , вместо .
+                          .Trim();
+
+            if (double.TryParse(raw, NumberStyles.Any, CultureInfo.InvariantCulture, out double result))
                 return result;
 
             return 0.0;

@@ -4,23 +4,38 @@
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         Title="Форма ОП-10" Height="1542" Width="1520">
 
-
-    <ScrollViewer VerticalScrollBarVisibility="Auto">
-        <StackPanel Margin="10">
-
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+    <DockPanel LastChildFill="True">
+        <!-- Верхняя панель -->
+        <Border DockPanel.Dock="Top" Background="LightGray" BorderBrush="Gray" BorderThickness="0,0,0,1">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="5,2,5,2">
                 <Button Content="Выгрузка xlsx"
-                        Width="200"
-                        Height="30"
-                        Margin="0,0,10,0"
-                        Click="ExportToExcel_Click"/>
+                Width="110"
+                Height="22"
+                Margin="0,0,10,0"
+                FontSize="11"
+                Padding="4,0"
+                FontFamily="Segoe UI"
+                Click="ExportToExcel_Click"
+                Background="White"
+                BorderBrush="Gray"
+                BorderThickness="1"/>
 
                 <Button Content="Загрузить из xlsx"
-                        Width="200"
-                        Height="30"
-                        Margin="10,0,0,0"
-                        Click="ImportFromExcel_Click"/>
+                Width="130"
+                Height="22"
+                Margin="0"
+                FontSize="11"
+                Padding="4,0"
+                FontFamily="Segoe UI"
+                Click="ImportFromExcel_Click"
+                Background="White"
+                BorderBrush="Gray"
+                BorderThickness="1"/>
             </StackPanel>
+        </Border>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="10">
 
             <!-- Заголовок -->
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
@@ -348,4 +363,5 @@
             </StackPanel>
         </StackPanel>
     </ScrollViewer>
+    </DockPanel>
 </Window>
