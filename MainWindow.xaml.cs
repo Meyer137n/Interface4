@@ -12,6 +12,9 @@ using Excel = Microsoft.Office.Interop.Excel;
 using System.Windows.Controls;
 using System;
 using System.Windows.Data;
+using System.Globalization;
+using System.Text.RegularExpressions;
+using System.Windows.Input;
 
 namespace KitchenReportForm
 {
@@ -191,13 +194,71 @@ namespace KitchenReportForm
                 {
                     var worksheet = workbook.Worksheet(1);
 
-                    // Запись TextBox'ов в A90+
-                    int row = 90;
-                    foreach (var value in textBoxValues)
+                    //Экспорт значений из элементов формы
+                    worksheet.Cell("A6").Value = OrganizationTextBox.Text;        // (A90) Название организации
+                    worksheet.Cell("A8").Value = DepartmentTextBox.Text;          // (B90) Структурное подразделение
+                    worksheet.Cell("AQ14").Value = DocumentNumberTextBox.Text;      // (C90) Номер документа
+                    if (ApprovalDatePicker.SelectedDate is DateTime date)
                     {
-                        worksheet.Cell($"A{row}").Value = value;
-                        row++;
+                        var culture = new CultureInfo("ru-RU");
+                        worksheet.Cell("BK17").Value = date.Day.ToString("00");               // (D90) День
+                        worksheet.Cell("BM17").Value = date.ToString("MMMM", culture);        // (E90) Месяц текстом (например, "апрель")
+                        worksheet.Cell("BU17").Value = date.Year;                             // (F90) Год
                     }
+                    worksheet.Cell("AY14").Value = ApprovalDatePicker2.SelectedDate?.ToString("dd.MM.yyyy");  // (E90) Дата составления акта
+
+                    worksheet.Cell("BQ6").Value = OkpoTextBox.Text;                // (F90) Код по ОКПО
+                    worksheet.Cell("BQ9").Value = OkdpTextBox.Text;                // (G90) Вид деятельности по ОКДП
+                    worksheet.Cell("BQ10").Value = OperationTextBox.Text;           // (H90) Вид операции
+
+                    worksheet.Cell("BJ13").Value = PositionTextBox.Text;            // (I90) Должность руководителя
+
+                    worksheet.Cell("A58").Value = ReceivedRubTextBox.Text;         // (J90) Получено за приготовление (руб.)
+                    worksheet.Cell("BP58").Value = ReceivedKopTextBox.Text;         // (K90) Получено за приготовление (коп.)
+                    worksheet.Cell("AE59").Value = TotalRubTextBox.Text;            // (L90) Итого за день (руб.)
+                    worksheet.Cell("BP59").Value = TotalKopTextBox.Text;            // (M90) Итого за день (коп.)
+
+                    worksheet.Cell("V62").Value = SpicesPercentTextBox.Text;
+                    worksheet.Cell("AK62").Value = SpicesRubTextBox.Text;           // (N90) Специи (руб.)
+                    worksheet.Cell("BC62").Value = SpicesKopTextBox.Text;           // (O90) Специи (коп.)
+
+                    worksheet.Cell("U64").Value = SaltPercentTextBox.Text;
+                    worksheet.Cell("AK64").Value = SaltRubTextBox.Text;             // (P90) Соль (руб.)
+                    worksheet.Cell("BC64").Value = SaltKopTextBox.Text;             // (Q90) Соль (коп.)
+
+                    // Суммируем
+                    int spicesRub = 0;
+                    int spicesKop = 0;
+                    int saltRub = 0;
+                    int saltKop = 0;
+
+                    int.TryParse(SpicesRubTextBox.Text, out spicesRub);
+                    int.TryParse(SpicesKopTextBox.Text, out spicesKop);
+                    int.TryParse(SaltRubTextBox.Text, out saltRub);
+                    int.TryParse(SaltKopTextBox.Text, out saltKop);
+
+                    int totalKop = spicesKop + saltKop;
+                    int totalRub = spicesRub + saltRub + (totalKop / 100);
+                    totalKop = totalKop % 100;
+
+                    // Записываем
+                    worksheet.Cell("AK66").Value = totalRub; // Итого руб.
+                    worksheet.Cell("BC66").Value = totalKop; // Итого коп.
+
+
+                    // Комиссия
+                    worksheet.Cell("A73").Value = JobTitleComisionTextBox.Text;        // (A70) Должность члена комиссии
+
+                    // Касса
+                    worksheet.Cell("I76").Value = CashRubTextBox.Text;                 // (B72) руб.
+                    worksheet.Cell("BR76").Value = CashKopTextBox.Text;                 // (C72) коп.
+
+                    // Приложения
+                    worksheet.Cell("I80").Value = InvoiceNumberTextBox.Text;           // (B74) Накладная №
+                    worksheet.Cell("BH80").Value = DailySumTextBoxRub.Text;             // (C74) сумма руб.
+                    worksheet.Cell("BR80").Value = DailySumTextBoxCop.Text;             // (D74) сумма коп.
+                    worksheet.Cell("L82").Value = SheetNumberTextBox.Text;             // (B75) Заборный лист №
+
 
                     // Прямой доступ к ItemsSource
                     var itemsSource = KitchenDataGrid.ItemsSource as IEnumerable<KitchenItem>;
@@ -207,39 +268,81 @@ namespace KitchenReportForm
 
                         for (int i = 0; i < items.Count; i++)
                         {
-                            int targetRow = (i < 11) ? 27 + i : 47 + (i - 11); // строки A27–A37 и A47–A53
-
+                            int targetRow = (i < 11) ? 27 + i : 47 + (i - 11);
                             var item = items[i];
 
                             worksheet.Cell($"A{targetRow}").Value = item.Number;
                             worksheet.Cell($"E{targetRow}").Value = item.Name;
                             worksheet.Cell($"P{targetRow}").Value = item.Code;
+
                             worksheet.Cell($"S{targetRow}").Value = item.Price;
+                            worksheet.Cell($"S{targetRow}").Style.NumberFormat.Format = "#,##0.00 ₽";
+
                             worksheet.Cell($"X{targetRow}").Value = item.QuantityNal;
                             worksheet.Cell($"AB{targetRow}").Value = item.SumNal;
+                            worksheet.Cell($"AB{targetRow}").Style.NumberFormat.Format = "#,##0.00 ₽";
+
                             worksheet.Cell($"AG{targetRow}").Value = item.QuantityBufet;
                             worksheet.Cell($"AK{targetRow}").Value = item.SumBufet;
+                            worksheet.Cell($"AK{targetRow}").Style.NumberFormat.Format = "#,##0.00 ₽";
+
                             worksheet.Cell($"AP{targetRow}").Value = item.QuantityOrg;
                             worksheet.Cell($"AT{targetRow}").Value = item.SumOrg;
+                            worksheet.Cell($"AT{targetRow}").Style.NumberFormat.Format = "#,##0.00 ₽";
+
                             worksheet.Cell($"AY{targetRow}").Value = item.QuantityTotal;
                             worksheet.Cell($"BC{targetRow}").Value = item.SumTotal;
+                            worksheet.Cell($"BC{targetRow}").Style.NumberFormat.Format = "#,##0.00 ₽";
+
                             worksheet.Cell($"BG{targetRow}").Value = item.AccountingPrice;
+                            worksheet.Cell($"BG{targetRow}").Style.NumberFormat.Format = "#,##0.00 ₽";
+
                             worksheet.Cell($"BK{targetRow}").Value = item.AccountingSum;
+                            worksheet.Cell($"BK{targetRow}").Style.NumberFormat.Format = "#,##0.00 ₽";
+
                             worksheet.Cell($"BO{targetRow}").Value = item.PricePrice;
+                            worksheet.Cell($"BO{targetRow}").Style.NumberFormat.Format = "#,##0.00 ₽";
+
                             worksheet.Cell($"BT{targetRow}").Value = item.PriceSum;
+                            worksheet.Cell($"BT{targetRow}").Style.NumberFormat.Format = "#,##0.00 ₽";
                         }
+
                     }
 
-                    workbook.SaveAs(saveFileDialog.FileName);
+                    try
+                    {
+                        workbook.SaveAs(saveFileDialog.FileName);
+                        MessageBox.Show("Файл успешно сохранён:\n" + saveFileDialog.FileName, "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                    catch (IOException ex)
+                    {
+                        MessageBox.Show($"Не удалось сохранить файл. Он может быть открыт в другой программе или заблокирован.\n{ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+
                 }
 
-                MessageBox.Show("Файл успешно сохранён:\n" + saveFileDialog.FileName, "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                //MessageBox.Show("Файл успешно сохранён:\n" + saveFileDialog.FileName, "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }
 
         private void ExportToExcel_Click(object sender, RoutedEventArgs e)
         {
             ExportTextBoxesToExcel();
+        }
+
+        private void DecimalTextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {
+            // Проверка на ввод допустимого десятичного числа (с точкой)
+            var textBox = sender as TextBox;
+            string fullText = textBox.Text.Insert(textBox.SelectionStart, e.Text);
+
+            e.Handled = !IsValidDecimalInput(fullText);
+        }
+
+        private bool IsValidDecimalInput(string input)
+        {
+            // Разрешаем до 2 знаков после запятой, точка — разделитель
+            return Regex.IsMatch(input, @"^\d*\.?\d{0,2}$");
         }
 
 
