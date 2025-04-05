@@ -3,22 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         Title="Форма ОП-10" Height="1542" Width="1520">
-    
-    <Window.Resources>
-        <x:Array x:Key="KitchenItemsList" Type="sys:String" xmlns:sys="clr-namespace:System;assembly=mscorlib">
-            <sys:String>Котлета по-киевски</sys:String>
-            <sys:String>Суп борщ</sys:String>
-            <sys:String>Пюре картофельное</sys:String>
-            <sys:String>Омлет с сыром</sys:String>
-        </x:Array>
-
-        <x:Array x:Key="KitchenCodesList" Type="sys:String" xmlns:sys="clr-namespace:System;assembly=mscorlib">
-            <sys:String>101</sys:String>
-            <sys:String>102</sys:String>
-            <sys:String>103</sys:String>
-            <sys:String>104</sys:String>
-        </x:Array>
-    </Window.Resources>
 
 
     <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -144,14 +128,13 @@
                 </DataGridTemplateColumn.CellTemplate>
                 <DataGridTemplateColumn.CellEditingTemplate>
                     <DataTemplate>
-                        <ComboBox
-                        ItemsSource="{StaticResource KitchenItemsList}" 
-                        SelectedItem="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        IsEditable="True"
-                        IsTextSearchEnabled="True"
-                        StaysOpenOnEdit="True"
-                        TextSearch.TextPath=""/>
-                    </DataTemplate>
+                    <ComboBox
+                    ItemsSource="{Binding DataContext.KitchenItemsList, RelativeSource={RelativeSource AncestorType=Window}}" 
+                    SelectedItem="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    IsEditable="True"
+                    IsTextSearchEnabled="True"
+                    StaysOpenOnEdit="True"/>
+                </DataTemplate>
                 </DataGridTemplateColumn.CellEditingTemplate>
             </DataGridTemplateColumn>
 
@@ -164,13 +147,13 @@
                 </DataGridTemplateColumn.CellTemplate>
                 <DataGridTemplateColumn.CellEditingTemplate>
                     <DataTemplate>
-                        <ComboBox
-                        ItemsSource="{StaticResource KitchenCodesList}" 
-                        SelectedItem="{Binding Code, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                        IsEditable="True"
-                        IsTextSearchEnabled="True"
-                        StaysOpenOnEdit="True"/>
-                    </DataTemplate>
+                    <ComboBox
+                    ItemsSource="{Binding DataContext.KitchenCodesList, RelativeSource={RelativeSource AncestorType=Window}}" 
+                    SelectedItem="{Binding Code, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    IsEditable="True"
+                    IsTextSearchEnabled="True"
+                    StaysOpenOnEdit="True"/>
+                </DataTemplate>
                 </DataGridTemplateColumn.CellEditingTemplate>
             </DataGridTemplateColumn>
 

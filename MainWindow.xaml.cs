@@ -25,22 +25,25 @@ namespace KitchenReportForm
         // Словарь: Название → Код
         public static readonly Dictionary<string, string> NameToCode = new Dictionary<string, string>
         {
-            { "Котлета по-киевски", "101" },
-            { "Суп борщ", "102" },
-            { "Пюре картофельное", "103" },
-            { "Омлет с сыром", "104" }
         };
 
         public static readonly Dictionary<string, string> CodeToName = new Dictionary<string, string>
         {
-            { "101", "Котлета по-киевски" },
-            { "102", "Суп борщ" },
-            { "103", "Пюре картофельное" },
-            { "104", "Омлет с сыром" }
         };
+
+        public ObservableCollection<string> KitchenItemsList { get; set; } = new ObservableCollection<string>();
+        public ObservableCollection<string> KitchenCodesList { get; set; } = new ObservableCollection<string>();
 
         public MainWindow()
         {
+            LoadKitchenItemsFromFiles(); // сначала загрузить списки
+
+            for (int i = 0; i < Math.Min(KitchenItemsList.Count, KitchenCodesList.Count); i++)
+            {
+                NameToCode[KitchenItemsList[i]] = KitchenCodesList[i];
+                CodeToName[KitchenCodesList[i]] = KitchenItemsList[i];
+            }
+
             InitializeComponent();
 
             KitchenItems = new ObservableCollection<KitchenItem>
@@ -74,85 +77,6 @@ namespace KitchenReportForm
                 MessageBox.Show("Выберите строку для удаления.");
             }
         }
-
-
-        /* private void ImportFromExcel_Click(object sender, RoutedEventArgs e)
-         {
-             var openFileDialog = new OpenFileDialog
-             {
-                 Title = "Выберите файл Excel",
-                 Filter = "Excel файл (*.xlsx)|*.xlsx"
-             };
-
-             if (openFileDialog.ShowDialog() == true)
-             {
-                 var workbook = new XLWorkbook(openFileDialog.FileName);
-                 var worksheet = workbook.Worksheet(1);
-
-                 // Шаг 1: загрузка данных из A90+ в TextBox'ы
-                 var textBoxes = new List<TextBox>();
-
-                 void CollectTextBoxes(DependencyObject parent)
-                 {
-                     int count = VisualTreeHelper.GetChildrenCount(parent);
-                     for (int i = 0; i < count; i++)
-                     {
-                         var child = VisualTreeHelper.GetChild(parent, i);
-                         if (child is TextBox tb)
-                             textBoxes.Add(tb);
-                         else
-                             CollectTextBoxes(child);
-                     }
-                 }
-
-                 CollectTextBoxes(this);
-
-                 int row = 90;
-                 foreach (var tb in textBoxes)
-                 {
-                     var cellValue = worksheet.Cell($"A{row}").GetString();
-                     tb.Text = cellValue;
-                     row++;
-                 }
-
-                 // Шаг 2: загрузка строк таблицы из A110+
-                 int tableRow = 110;
-                 var items = new List<KitchenItem>();
-
-                 while (!worksheet.Cell($"A{tableRow}").IsEmpty())
-                 {
-                     try
-                     {
-                         var item = new KitchenItem
-                         {
-                             Number = int.TryParse(worksheet.Cell(tableRow, 1).GetString(), out var num) ? num : 0,
-                             Name = worksheet.Cell(tableRow, 2).GetString(),
-                             Code = worksheet.Cell(tableRow, 3).GetString(),
-                             Price = double.TryParse(worksheet.Cell(tableRow, 4).GetString(), out var p) ? p : 0,
-                             QuantityNal = double.TryParse(worksheet.Cell(tableRow, 5).GetString(), out var qn) ? qn : 0,
-                             SumNal = double.TryParse(worksheet.Cell(tableRow, 6).GetString(), out var sn) ? sn : 0,
-                             QuantityBufet = double.TryParse(worksheet.Cell(tableRow, 7).GetString(), out var qb) ? qb : 0,
-                             SumBufet = double.TryParse(worksheet.Cell(tableRow, 8).GetString(), out var sb) ? sb : 0,
-                             QuantityOrg = double.TryParse(worksheet.Cell(tableRow, 9).GetString(), out var qo) ? qo : 0,
-                             SumOrg = double.TryParse(worksheet.Cell(tableRow, 10).GetString(), out var so) ? so : 0,
-                             QuantityTotal = double.TryParse(worksheet.Cell(tableRow, 11).GetString(), out var qt) ? qt : 0,
-                             SumTotal = double.TryParse(worksheet.Cell(tableRow, 12).GetString(), out var st) ? st : 0,
-                             AccountingPrice = double.TryParse(worksheet.Cell(tableRow, 13).GetString(), out var ap) ? ap : 0,
-                             AccountingSum = double.TryParse(worksheet.Cell(tableRow, 14).GetString(), out var asum) ? asum : 0
-                         };
-
-                         items.Add(item);
-                         tableRow++;
-                     }
-                     catch
-                     {
-                         break; // прерываем при ошибке или пустой строке
-                     }
-                 }
-
-                 KitchenDataGrid.ItemsSource = items;
-             }
-         }*/
 
         private int TryGetInt(IXLCell cell)
         {
@@ -307,8 +231,6 @@ namespace KitchenReportForm
                 MessageBox.Show($"Ошибка при загрузке данных:\n{ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-
 
         private void ExportTextBoxesToExcel()
         {
@@ -556,6 +478,33 @@ namespace KitchenReportForm
             }
         }
 
+        private void LoadKitchenItemsFromFiles()
+        {
+            string itemsPath = "kitchen_items.txt"; // файл с названиями
+            string codesPath = "kitchen_codes.txt"; // файл с кодами
+
+            if (File.Exists(itemsPath))
+            {
+                var items = File.ReadAllLines(itemsPath)
+                                .Where(line => !string.IsNullOrWhiteSpace(line))
+                                .ToList();
+                KitchenItemsList.Clear();
+                foreach (var item in items)
+                    KitchenItemsList.Add(item);
+            }
+
+            if (File.Exists(codesPath))
+            {
+                var codes = File.ReadAllLines(codesPath)
+                                .Where(line => !string.IsNullOrWhiteSpace(line))
+                                .ToList();
+                KitchenCodesList.Clear();
+                foreach (var code in codes)
+                    KitchenCodesList.Add(code);
+            }
+        }
+
+
     }
 
     public class KitchenItem : INotifyPropertyChanged
@@ -589,7 +538,6 @@ namespace KitchenReportForm
                     _name = value;
                     OnPropertyChanged(nameof(Name));
 
-                    // Автозаполнение кода
                     if (MainWindow.NameToCode.TryGetValue(_name, out var matchedCode))
                     {
                         _code = matchedCode;
@@ -609,7 +557,6 @@ namespace KitchenReportForm
                     _code = value;
                     OnPropertyChanged(nameof(Code));
 
-                    // Автозаполнение названия
                     if (MainWindow.CodeToName.TryGetValue(_code, out var matchedName))
                     {
                         _name = matchedName;
@@ -618,6 +565,7 @@ namespace KitchenReportForm
                 }
             }
         }
+
 
         public double Price
         {
