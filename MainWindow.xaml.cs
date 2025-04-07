@@ -228,7 +228,11 @@ namespace KitchenReportForm
                     }
 
                     // Привязываем обратно
-                    KitchenDataGrid.ItemsSource = items;
+                    // Привязываем обратно
+                    KitchenItems.Clear();
+                    foreach (var item in items)
+                        KitchenItems.Add(item);
+
                     MessageBox.Show("Данные успешно загружены из Excel.", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }

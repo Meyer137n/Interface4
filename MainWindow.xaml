@@ -127,7 +127,7 @@
           CanUserDeleteRows="True"
           IsReadOnly="False"
           Margin="0,20,0,0"
-          Height="420"
+          Height="430"
           ColumnWidth="SizeToHeader"
           ItemsSource="{Binding KitchenItems}">
                 
