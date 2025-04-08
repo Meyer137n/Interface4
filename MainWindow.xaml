@@ -70,12 +70,12 @@
                     <TextBox Name="PositionTextBox" Width="150" Height="20"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,40,0">
-                    <TextBlock Text="___________________    "/>
-                    <TextBlock Text="__________________________________________"/>
+                    <TextBlock Text="__________________________    " />
+                    <TextBox Width="300" Height="20" Margin="20,0,0,0"/>
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,40,0">
-                    <TextBlock Text="(подпись)                         "/>
-                    <TextBlock Text="(расшифровка подписи)         "/>
+                        <TextBlock Text="(подпись)                         " Margin="20,0,40,0"/>
+                        <TextBlock Text="(расшифровка подписи)         " Margin="20,0,50,0"/>
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,40,0">
@@ -116,252 +116,266 @@
                 <TextBlock Text="О РЕАЛИЗАЦИИ И ОТПУСКЕ ИЗДЕЛИЙ КУХНИ" FontSize="16" FontWeight="Bold" TextAlignment="Center"/>
             </StackPanel>
 
-            
-            
-
-            <!-- Таблица -->
-        <DataGrid x:Name="KitchenDataGrid"
-          AutoGenerateColumns="False"
-          HeadersVisibility="Column"
-          CanUserAddRows="False"
-          CanUserDeleteRows="True"
-          IsReadOnly="False"
-          Margin="0,20,0,0"
-          Height="430"
-          ColumnWidth="SizeToHeader"
-          ItemsSource="{Binding KitchenItems}">
-                
-
-        <DataGrid.Columns>
-        <DataGridTextColumn Header="№" Width="25" Binding="{Binding Number}" IsReadOnly="True"/>
-
-            <!-- Готовое изделие (встроенный список) -->
-            <DataGridTemplateColumn Header="Готовое изделие" Width="200">
-                <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Name}" />
-                    </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-                <DataGridTemplateColumn.CellEditingTemplate>
-                    <DataTemplate>
-                    <ComboBox
-                    ItemsSource="{Binding DataContext.KitchenItemsList, RelativeSource={RelativeSource AncestorType=Window}}" 
-                    SelectedItem="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    IsEditable="True"
-                    IsTextSearchEnabled="True"
-                    StaysOpenOnEdit="True"/>
-                </DataTemplate>
-                </DataGridTemplateColumn.CellEditingTemplate>
-            </DataGridTemplateColumn>
-
-            <!-- Код (встроенный список) -->
-            <DataGridTemplateColumn Header="Код" Width="80">
-                <DataGridTemplateColumn.CellTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding Code}" />
-                    </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-                <DataGridTemplateColumn.CellEditingTemplate>
-                    <DataTemplate>
-                    <ComboBox
-                    ItemsSource="{Binding DataContext.KitchenCodesList, RelativeSource={RelativeSource AncestorType=Window}}" 
-                    SelectedItem="{Binding Code, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                    IsEditable="True"
-                    IsTextSearchEnabled="True"
-                    StaysOpenOnEdit="True"/>
-                </DataTemplate>
-                </DataGridTemplateColumn.CellEditingTemplate>
-            </DataGridTemplateColumn>
 
 
-             <!-- Остальные числовые поля с проверкой чисел с копейками -->
-             <DataGridTextColumn Header="Цена&#x0a;продажи,&#x0a;руб. коп." Width="80" Binding="{Binding Price, StringFormat=N2}"/>
-             <DataGridTextColumn Header="Кол-во&#x0a;(наличный &#x0a;расчёт),&#x0a;шт." Width="80" Binding="{Binding QuantityNal}"/>
-             <DataGridTextColumn Header="Сумма&#x0a;(наличный &#x0a;расчёт),&#x0a;руб. коп." Width="80" Binding="{Binding SumNal, StringFormat=N2}"/>
-             <DataGridTextColumn Header="Буфеты/&#x0a;мелкорозн. сети&#x0a;кол-во,&#x0a;шт." Width="100" Binding="{Binding QuantityBufet}"/>
-             <DataGridTextColumn Header="Буфеты/&#x0a;мелкорозн. сети&#x0a;сумма,&#x0a;руб. коп." Width="100" Binding="{Binding SumBufet, StringFormat=N2}"/>
-             <DataGridTextColumn Header="Работникам&#x0a;организации&#x0a;кол-во,&#x0a;шт." Width="90" Binding="{Binding QuantityOrg}"/>
-             <DataGridTextColumn Header="Работникам&#x0a;организации&#x0a;сумма,&#x0a;руб. коп." Width="90" Binding="{Binding SumOrg, StringFormat=N2}"/>
-             <DataGridTextColumn Header="Кол-во,&#x0a;шт." Width="80" Binding="{Binding QuantityTotal}"/>
-             <DataGridTextColumn Header="Сумма,&#x0a;руб. коп." Width="80" Binding="{Binding SumTotal, StringFormat=N2}"/>
-             <DataGridTextColumn Header="Кол-во(всего),&#x0a;шт." Width="90" Binding="{Binding AccountingPrice}"/>
-             <DataGridTextColumn Header="Сумма(всего),&#x0a;руб. коп." Width="90" Binding="{Binding AccountingSum, StringFormat=N2}"/>
-             <DataGridTextColumn Header="Кол-во по&#x0a;учётным ценам,&#x0a;шт." Width="100" Binding="{Binding PricePrice}"/>
-             <DataGridTextColumn Header="Сумма по&#x0a;учётным ценам,&#x0a;руб. коп." Width="100" Binding="{Binding PriceSum, StringFormat=N2}"/>
-         </DataGrid.Columns>
-         </DataGrid>
 
-            <Button Content="Добавить строку +" Width="150" Height="30" Margin="0,10,0,0"
-            Click="AddRowButton_Click" HorizontalAlignment="Center"/>
+                <TabControl Margin="10,20,10,10">
+                    <!-- Вкладка "Таблица" -->
+                    <TabItem Header="Таблица">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="10">
+                                <!-- Таблица -->
+                                <DataGrid x:Name="KitchenDataGrid"
+                          AutoGenerateColumns="False"
+                          HeadersVisibility="Column"
+                          CanUserAddRows="False"
+                          CanUserDeleteRows="True"
+                          IsReadOnly="False"
+                          Margin="0,20,0,0"
+                          Height="430"
+                          ColumnWidth="SizeToHeader"
+                          ItemsSource="{Binding KitchenItems}">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="№" Width="25" Binding="{Binding Number}" IsReadOnly="True"/>
+                                        <DataGridTemplateColumn Header="Готовое изделие" Width="200">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Name}" />
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                            <DataGridTemplateColumn.CellEditingTemplate>
+                                                <DataTemplate>
+                                                    <ComboBox
+                                        ItemsSource="{Binding DataContext.KitchenItemsList, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                        SelectedItem="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        IsEditable="True"
+                                        IsTextSearchEnabled="True"
+                                        StaysOpenOnEdit="True"/>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellEditingTemplate>
+                                        </DataGridTemplateColumn>
+                                        <DataGridTemplateColumn Header="Код" Width="80">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock Text="{Binding Code}" />
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                            <DataGridTemplateColumn.CellEditingTemplate>
+                                                <DataTemplate>
+                                                    <ComboBox
+                                        ItemsSource="{Binding DataContext.KitchenCodesList, RelativeSource={RelativeSource AncestorType=Window}}" 
+                                        SelectedItem="{Binding Code, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                        IsEditable="True"
+                                        IsTextSearchEnabled="True"
+                                        StaysOpenOnEdit="True"/>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellEditingTemplate>
+                                        </DataGridTemplateColumn>
+                                        <!-- Остальные столбцы -->
+                                        <DataGridTextColumn Header="Цена&#x0a;продажи,&#x0a;руб. коп." Width="80" Binding="{Binding Price, StringFormat=N2}"/>
+                                        <DataGridTextColumn Header="Кол-во&#x0a;(наличный &#x0a;расчёт),&#x0a;шт." Width="80" Binding="{Binding QuantityNal}"/>
+                                        <DataGridTextColumn Header="Сумма&#x0a;(наличный &#x0a;расчёт),&#x0a;руб. коп." Width="80" Binding="{Binding SumNal, StringFormat=N2}"/>
+                                        <DataGridTextColumn Header="Буфеты/&#x0a;мелкорозн. сети&#x0a;кол-во,&#x0a;шт." Width="100" Binding="{Binding QuantityBufet}"/>
+                                        <DataGridTextColumn Header="Буфеты/&#x0a;мелкорозн. сети&#x0a;сумма,&#x0a;руб. коп." Width="100" Binding="{Binding SumBufet, StringFormat=N2}"/>
+                                        <DataGridTextColumn Header="Работникам&#x0a;организации&#x0a;кол-во,&#x0a;шт." Width="90" Binding="{Binding QuantityOrg}"/>
+                                        <DataGridTextColumn Header="Работникам&#x0a;организации&#x0a;сумма,&#x0a;руб. коп." Width="90" Binding="{Binding SumOrg, StringFormat=N2}"/>
+                                        <DataGridTextColumn Header="Кол-во,&#x0a;шт." Width="80" Binding="{Binding QuantityTotal}"/>
+                                        <DataGridTextColumn Header="Сумма,&#x0a;руб. коп." Width="80" Binding="{Binding SumTotal, StringFormat=N2}"/>
+                                        <DataGridTextColumn Header="Кол-во(всего),&#x0a;шт." Width="90" Binding="{Binding AccountingPrice}"/>
+                                        <DataGridTextColumn Header="Сумма(всего),&#x0a;руб. коп." Width="90" Binding="{Binding AccountingSum, StringFormat=N2}"/>
+                                        <DataGridTextColumn Header="Кол-во по&#x0a;учётным ценам,&#x0a;шт." Width="100" Binding="{Binding PricePrice}"/>
+                                        <DataGridTextColumn Header="Сумма по&#x0a;учётным ценам,&#x0a;руб. коп." Width="100" Binding="{Binding PriceSum, StringFormat=N2}"/>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                                <Button Content="Добавить строку +" Width="150" Height="30" Margin="0,10,0,0"
+                        Click="AddRowButton_Click" HorizontalAlignment="Center"/>
+                                <Button Content="Удалить строку +" Width="150" Height="30" Margin="0,10,0,0"
+                        Click="DeleteRowButton_Click" HorizontalAlignment="Center"/>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
 
-            <Button Content="Удалить строку +" Width="150" Height="30" Margin="0,10,0,0"
-            Click="DeleteRowButton_Click" HorizontalAlignment="Center"/>
+                    <!-- Вкладка "Итого до Члены комиссии" -->
+                    <TabItem Header="Итого">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="10">
+                                <TextBlock Text="Итого" FontWeight="Bold" Margin="0,20,0,0"/>
+                                <!-- Получено от посетителей -->
+                                <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
+                                    <TextBlock Text="Получено за приготовление блюд из продуктов посетителей:" Width="360"/>
+                                    <TextBox Name="ReceivedRubTextBox" Width="400"/>
+                                    <TextBlock Text="руб.   " Margin="10,0,0,0"/>
+                                    <TextBox Name="ReceivedKopTextBox" Width="300"/>
+                                    <TextBlock Text="коп." Margin="10,0,0,0"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="(прописью)" Margin="520,0,0,0"/>
+                                    <TextBlock Text="(прописью)" Margin="330,0,0,0"/>
+                                </StackPanel>
 
-            <!-- Итого -->
-            <TextBlock Text="Итого" FontWeight="Bold" Margin="0,20,0,0"/>
+                                <!-- Итого за день -->
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="Итого реализовано, отпущено и оказано услуг за отчётный день" Margin="0,15,20,0"/>
+                                    <TextBox Name="TotalRubTextBox" Width="400" Margin="0,15,0,0"/>
+                                    <TextBlock Text="руб.   " Margin="10,15,0,0"/>
+                                    <TextBox Name="TotalKopTextBox" Width="300" Margin="0,15,0,0"/>
+                                    <TextBlock Text="коп." Margin="10,15,0,0"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="(прописью)" Margin="540,0,0,0"/>
+                                    <TextBlock Text="(прописью)" Margin="330,0,0,0"/>
+                                </StackPanel>
 
-            <!-- Получено от посетителей -->
-            <StackPanel Orientation="Horizontal" Margin="0,15,0,0">
-                <TextBlock Text="Получено за приготовление блюд из продуктов посетителей:" Width="360"/>
-                <TextBox Name="ReceivedRubTextBox" Width="400"/>
-                <TextBlock Text="руб.   " Margin="10,0,0,0"/>
-                <TextBox Name="ReceivedKopTextBox" Width="300"/>
-                <TextBlock Text="коп." Margin="10,0,0,0"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="(прописью)" Margin="520,0,0,0"/>
-                <TextBlock Text="(прописью)" Margin="330,0,0,0"/>
-            </StackPanel>
+                                <!-- Справка по расходу -->
+                                <TextBlock Text="СПРАВКА: Израсходовано на приготовление блюд" FontWeight="Bold" Margin="0,30,0,0"/>
 
-            <!-- Итого за день -->
-            
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="Итого реализовано, отпущено и оказано услуг за отчётный день" Margin="0,15,20,0"/>
-                <TextBox Name="TotalRubTextBox" Width="400" Margin="0,15,0,0"/>
-                <TextBlock Text="руб.   " Margin="10,15,0,0"/>
-                <TextBox Name="TotalKopTextBox" Width="300" Margin="0,15,0,0"/>
-                <TextBlock Text="коп." Margin="10,15,0,0"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="(прописью)" Margin="540,0,0,0"/>
-                <TextBlock Text="(прописью)" Margin="330,0,0,0"/>
-            </StackPanel>
+                                <!-- Специи -->
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="специи" Width="60" Margin="0,15,0,0"/>
+                                    <TextBox Name="SpicesPercentTextBox" Width="40" Margin="0,15,0,0" PreviewTextInput="IntegerRange0To100_PreviewTextInput"
+                             LostFocus="IntegerRange0To100_LostFocus"/>
+                                    <TextBlock Text="% к обороту на сумму" Margin="10,15,0,0"/>
+                                    <TextBox Name="SpicesRubTextBox" Width="100" Margin="10,15,0,0" PreviewTextInput="IntegerOnly_PreviewTextInput"/>
+                                    <TextBlock Text="руб." Margin="10,15,0,0"/>
+                                    <TextBox Name="SpicesKopTextBox" Width="50" Margin="10,15,0,0" PreviewTextInput="IntegerCop_PreviewTextInput"
+                             LostFocus="IntegerCop_LostFocus"/>
+                                    <TextBlock Text="коп." Margin="10,15,0,0"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="(цифрами)" Margin="270,0,0,0"/>
+                                    <TextBlock Text="(цифрами)" Margin="50,0,0,0"/>
+                                </StackPanel>
 
-            <!-- Справка по расходу -->
-            <TextBlock Text="СПРАВКА: Израсходовано на приготовление блюд" FontWeight="Bold" Margin="0,30,0,0"/>
+                                <!-- Соль -->
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="соль" Width="60" Margin="0,15,0,0"/>
+                                    <TextBox Name="SaltPercentTextBox" Width="40" Margin="0,15,0,0" PreviewTextInput="IntegerRange0To100_PreviewTextInput"
+                             LostFocus="IntegerRange0To100_LostFocus"/>
+                                    <TextBlock Text="% к обороту на сумму" Margin="10,15,0,0"/>
+                                    <TextBox Name="SaltRubTextBox" Width="100" Margin="10,15,0,0" PreviewTextInput="IntegerOnly_PreviewTextInput"/>
+                                    <TextBlock Text="руб." Margin="10,15,0,0"/>
+                                    <TextBox Name="SaltKopTextBox" Width="50" Margin="10,15,0,0" PreviewTextInput="IntegerCop_PreviewTextInput"
+                             LostFocus="IntegerCop_LostFocus"/>
+                                    <TextBlock Text="коп." Margin="10,15,0,0"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="(цифрами)" Margin="270,0,0,0"/>
+                                    <TextBlock Text="(цифрами)" Margin="50,0,0,0"/>
+                                </StackPanel>
 
-            <!-- Специи -->
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="специи" Width="60" Margin="0,15,0,0"/>
-                <TextBox Name="SpicesPercentTextBox" Width="40" Margin="0,15,0,0" PreviewTextInput="IntegerRange0To100_PreviewTextInput"
-         LostFocus="IntegerRange0To100_LostFocus"/>
-                <TextBlock Text="% к обороту на сумму" Margin="10,15,0,0"/>
-                <TextBox Name="SpicesRubTextBox" Width="100" Margin="10,15,0,0" PreviewTextInput="IntegerOnly_PreviewTextInput"/>
-                <TextBlock Text="руб." Margin="10,15,0,0"/>
-                <TextBox Name="SpicesKopTextBox" Width="50" Margin="10,15,0,0" PreviewTextInput="IntegerCop_PreviewTextInput"
-         LostFocus="IntegerCop_LostFocus"/>
-                <TextBlock Text="коп." Margin="10,15,0,0"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="(цифрами)" Margin="270,0,0,0"/>
-                <TextBlock Text="(цифрами)" Margin="50,0,0,0"/>
-            </StackPanel>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
 
-            <!-- Соль -->
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="соль" Width="60" Margin="0,15,0,0"/>
-                <TextBox Name="SaltPercentTextBox" Width="40" Margin="0,15,0,0" PreviewTextInput="IntegerRange0To100_PreviewTextInput"
-         LostFocus="IntegerRange0To100_LostFocus"/>
-                <TextBlock Text="% к обороту на сумму" Margin="10,15,0,0"/>
-                <TextBox Name="SaltRubTextBox" Width="100" Margin="10,15,0,0" PreviewTextInput="IntegerOnly_PreviewTextInput"/>
-                <TextBlock Text="руб." Margin="10,15,0,0"/>
-                <TextBox Name="SaltKopTextBox" Width="50" Margin="10,15,0,0" PreviewTextInput="IntegerCop_PreviewTextInput"
-         LostFocus="IntegerCop_LostFocus"/>
-                <TextBlock Text="коп." Margin="10,15,0,0"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="(цифрами)" Margin="270,0,0,0"/>
-                <TextBlock Text="(цифрами)" Margin="50,0,0,0"/>
-            </StackPanel>
+                    <!-- Вкладка "Члены комиссии до Приложения" -->
+                    <TabItem Header="Члены комиссии">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="10">
+                                <TextBlock Text="Члены комиссии:" FontWeight="Bold" Margin="0,30,0,0"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,15,40,0">
+                                    <TextBlock Text="Заведующий производством" Margin="0,0,20,0"/>
+                                    <TextBlock Text="___________________    "/>
+                                    <TextBox Width="300" Height="20"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="200,5,0,0">
+                                    <TextBlock Text="(подпись)                         "/>
+                                    <TextBlock Text="(расшифровка подписи)         "/>
+                                </StackPanel>
 
-            <!-- Подписи комиссии -->
-            <TextBlock Text="Члены комиссии:" FontWeight="Bold" Margin="0,30,0,0"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                                    <TextBlock Text="Марочница" Margin="0,0,20,0"/>
+                                    <TextBlock Text="___________________    "/>
+                                    <TextBox Width="300" Height="20"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="100,5,0,0">
+                                    <TextBlock Text="(подпись)                         "/>
+                                    <TextBlock Text="(расшифровка подписи)         "/>
+                                </StackPanel>
 
-            <StackPanel Orientation="Horizontal" Margin="0,15,40,0">
-                <TextBlock Text="Заведующий производством" Margin="0,0,20,0"/>
-                <TextBlock Text="___________________    "/>
-                <TextBlock Text="__________________________________________"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="200,5,0,0">
-                <TextBlock Text="(подпись)                         "/>
-                <TextBlock Text="(расшифровка подписи)         "/>
-            </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,30,0,0">
+                                    <TextBox Name="JobTitleComisionTextBox" Width="260" Margin="0,0,20,0"/>
+                                    <TextBlock Text="________________________       "/>
+                                    <TextBox Width="300" Height="20"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="100,5,0,0">
+                                    <TextBlock Text="(должность)" Margin="0,5,0,0"/>
+                                    <TextBlock Text="(подпись)" Margin="140,5,0,0"/>
+                                    <TextBlock Text="(расшифровка подписи)" Margin="100,5,0,0"/>
+                                </StackPanel>
+                                <!-- Выручка кассы -->
+                                <TextBlock Text="Выручка кассы" FontWeight="Bold" Margin="0,30,0,0"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                                    <TextBlock Text="Выручка кассы" Margin="0,5,10,0"/>
+                                    <TextBox Name="CashRubTextBox" Width="400" Margin="5,5"/>
+                                    <TextBlock Text="руб.   " Margin="5,5"/>
+                                    <TextBox Name="CashKopTextBox" Width="300" Margin="5,5"/>
+                                    <TextBlock Text="коп." Margin="5,5"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="(прописью)" Margin="270,0,0,0"/>
+                                    <TextBlock Text="(прописью)" Margin="330,0,0,0"/>
+                                </StackPanel>
 
-            <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
-                <TextBlock Text="Марочница" Margin="0,0,20,0"/>
-                <TextBlock Text="___________________    "/>
-                <TextBlock Text="__________________________________________"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="100,5,0,0">
-                <TextBlock Text="(подпись)                         "/>
-                <TextBlock Text="(расшифровка подписи)         "/>
-            </StackPanel>
-
-            <StackPanel Orientation="Horizontal" Margin="0,30,0,0">
-                <TextBox Name="JobTitleComisionTextBox" Width="260" Margin="0,0,20,0"/>
-                <TextBlock Text="________________________       "/>
-                <TextBlock Text="__________________________________________"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="100,5,0,0">
-                <TextBlock Text="(должность)" Margin="0,5,0,0"/>
-                <TextBlock Text="(подпись)" Margin="140,5,0,0"/>
-                <TextBlock Text="(расшифровка подписи)" Margin="100,5,0,0"/>
-            </StackPanel>
-
-            <!-- Выручка кассы -->
-            <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
-                <TextBlock Text="Выручка кассы" Margin="0,5,10,0"/>
-                <TextBox Name="CashRubTextBox" Width="400" Margin="5,5"/>
-                <TextBlock Text="руб.   " Margin="5,5"/>
-                <TextBox Name="CashKopTextBox" Width="300" Margin="5,5"/>
-                <TextBlock Text="коп." Margin="5,5"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="(прописью)" Margin="270,0,0,0"/>
-                <TextBlock Text="(прописью)" Margin="330,0,0,0"/>
-            </StackPanel>
-
-            <!-- Стоимость реализованных изделий, указанная в настоящем акте... -->
-            <StackPanel Orientation="Horizontal" Margin="0,30,0,0" VerticalAlignment="Center">
-                <TextBlock Text="Стоимость реализованных изделий, указанная в настоящем акте, соответствует кассовым чекам" 
+                                <!-- Стоимость реализованных изделий, указанная в настоящем акте... -->
+                                <StackPanel Orientation="Horizontal" Margin="0,30,0,0" VerticalAlignment="Center">
+                                    <TextBlock Text="Стоимость реализованных изделий, указанная в настоящем акте, соответствует кассовым чекам" 
                            FontSize="14" FontWeight="Normal" TextWrapping="Wrap" Width="1000" />
-            </StackPanel>
+                                </StackPanel>
 
-            <!-- Строка подписи кассира -->
-            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                <TextBlock Text="Кассир" Margin="0,0,20,0"/>
-                <TextBlock Text="___________________    "/>
-                <TextBlock Text="__________________________________________"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="75,5,0,0">
-                <TextBlock Text="(подпись)                         "/>
-                <TextBlock Text="(расшифровка подписи)         "/>
-            </StackPanel>
+                                <!-- Строка подписи кассира -->
+                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                    <TextBlock Text="Кассир" Margin="0,0,20,0"/>
+                                    <TextBlock Text="________________________       "/>
+                                    <TextBox Width="300" Height="20"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="75,5,0,0">
+                                    <TextBlock Text="(подпись)                         "/>
+                                    <TextBlock Text="(расшифровка подписи)         "/>
+                                </StackPanel>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
 
+                    <!-- Вкладка "Приложения до конца" -->
+                    <TabItem Header="Приложения">
+                        <ScrollViewer VerticalScrollBarVisibility="Auto">
+                            <StackPanel Margin="10">
+                                <TextBlock Text="ПРИЛОЖЕНИЕ:" FontWeight="Bold" Margin="0,30,0,0"/>
+                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                    <TextBlock Text="Накладные №№" VerticalAlignment="Center"/>
+                                    <TextBox Name="InvoiceNumberTextBox" Width="400" Margin="5,5"/>
+                                    <TextBlock Text=", Сумма реализованного наложения за день" VerticalAlignment="Center" Margin="5,0"/>
+                                    <TextBox Name="DailySumTextBoxRub" Width="140" Margin="5,5" PreviewTextInput="IntegerOnly_PreviewTextInput"/>
+                                    <TextBlock Text="руб." VerticalAlignment="Center" Margin="5,0"/>
+                                    <TextBox Name="DailySumTextBoxCop" Width="50" Margin="5,5" PreviewTextInput="IntegerCop_PreviewTextInput"
+                             LostFocus="IntegerCop_LostFocus"/>
+                                    <TextBlock Text="коп." Margin="5,5,0,0"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="(цифрами)" Margin="795,0,0,0"/>
+                                    <TextBlock Text="(цифрами)" Margin="85,0,0,0"/>
+                                </StackPanel>
 
-            <!-- Приложения -->
-            <TextBlock Text="ПРИЛОЖЕНИЕ:" FontWeight="Bold" Margin="0,30,0,0"/>
-            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                <TextBlock Text="Накладные №№" VerticalAlignment="Center"/>
-                <TextBox Name="InvoiceNumberTextBox" Width="400" Margin="5,5"/>
-                <TextBlock Text=", Сумма реализованного наложения за день" VerticalAlignment="Center" Margin="5,0"/>
-                <TextBox Name="DailySumTextBoxRub" Width="140" Margin="5,5" PreviewTextInput="IntegerOnly_PreviewTextInput"/>
-                <TextBlock Text="руб." VerticalAlignment="Center" Margin="5,0"/>
-                <TextBox Name="DailySumTextBoxCop" Width="50" Margin="5,5" PreviewTextInput="IntegerCop_PreviewTextInput"
-         LostFocus="IntegerCop_LostFocus"/>
-                <TextBlock Text="коп." Margin="5,5,0,0"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="(цифрами)" Margin="795,0,0,0"/>
-                <TextBlock Text="(цифрами)" Margin="85,0,0,0"/>
-            </StackPanel>
+                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                    <TextBlock Text="Заборные листы №№" VerticalAlignment="Center"/>
+                                    <TextBox Name="SheetNumberTextBox" Width="400" Margin="5,0"/>
+                                </StackPanel>
 
-            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                <TextBlock Text="Заборные листы №№" VerticalAlignment="Center"/>
-                <TextBox Name="SheetNumberTextBox" Width="400" Margin="5,0"/>
+                                <!-- Акт проверки бухгалтер -->
+                                <StackPanel Orientation="Horizontal" Margin="0,20,20,0">
+                                    <TextBlock Text="Акт проверки бухгалтер" FontWeight="Bold" Margin="0,20,20,0"/>
+                                    <TextBlock Text="_______________________________" Margin="0,20,0,0"/>
+                                    <TextBox Width="300" Height="20" Margin="20,20,0,0"/>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="(подпись)" Margin="210,10,0,0"/>
+                                    <TextBlock Text="(расшифровка подписи)" Margin="190,10,0,60"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </TabItem>
+                </TabControl>
             </StackPanel>
-
-            <!-- Акт проверки бухгалтер -->
-            <StackPanel Orientation="Horizontal" Margin="0,20,20,0">
-                <TextBlock Text="Акт проверки бухгалтер" FontWeight="Bold" Margin="0,20,20,0"/>
-                <TextBlock Text="_______________________________" Margin="0,20,0,0"/>
-                <TextBlock Text="_______________________________________________________________________" Margin="30,20,0,0"/>
-            </StackPanel>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Text="(подпись)" Margin="210,10,0,0"/>
-                <TextBlock Text="(расшифровка подписи)" Margin="190,10,0,60"/>
-            </StackPanel>
-        </StackPanel>
     </ScrollViewer>
     </DockPanel>
 </Window>
